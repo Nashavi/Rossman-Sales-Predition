@@ -1,0 +1,117 @@
+---
+title: "Rossman Sales Prediction"
+author: "Kyle Bartsch"
+date: "January 27, 2016"
+output: html_document
+---
+```{r global_options, echo=FALSE}
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+
+```{r libraries,echo=FALSE}
+library(ggplot2)
+library(tree)
+library(boot)
+```
+
+```{r data_import}
+File = NULL #dynamically pull file based on laptop vs. desktop 
+File = ifelse(Sys.info()["nodename"]=="ZUMA",
+              "C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/rossman_data/rossman_data/train.csv",
+              "E:/OneDrive/UCD/Analytics/")
+sales = read.csv(File)
+File = NULL #dynamically pull file based on laptop vs. desktop 
+File = ifelse(Sys.info()["nodename"]=="ZUMA",
+              "C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/rossman_data/rossman_data/stores.csv",
+              "E:/OneDrive/UCD/Analytics/")
+stores = read.csv(File)
+
+d <- merge(x=sales,y=stores, by= "Store",all.x = TRUE)
+
+```
+
+
+```{r new_columns}
+d$date_year <- as.numeric(substr(d$Date,1,4)) 
+d$date_month <- as.numeric((substr(d$Date,6,7)))
+d$date_day <- as.numeric(substr(d$Date,9,10))
+
+d$daysdiff <- (d$date_year - d$CompetitionOpenSinceYear)*365
+
+d$CompetitionOpenDate <- paste(d$CompetitionOpenSinceYear,d$CompetitionOpenSinceMonth,"01", sep="-")
+
+d$datetest <- difftime(strptime(d$Date,format="%Y-%m-%d"),strptime(d$CompetitionOpenDate,format="%Y-%m-%d"),units="weeks")
+
+```
+
+
+```{r data_types}
+attach(d)
+options(contrasts = rep ("contr.treatment", 2)) #set default contrast treatment for ordinal factors
+dim(d)
+str(d)
+
+d$Store = as.factor(d$Store)
+d$DayOfWeek = as.factor(d$DayOfWeek)
+levels(d$DayOfWeek) = c("Mon","Tue","Wed","Thurs","Fri","Sat","Sun")
+d$Open = as.factor(d$Open)
+d$Promo = as.factor(d$Promo)
+d$SchoolHoliday = as.factor(d$SchoolHoliday)
+d$datetest = as.integer(d$datetest)
+
+```
+
+
+```{r variables_missing_values}
+m = matrix(data=NA,nrow=length(names(d)),ncol=2)
+dimnames(m) = list(names(d),c("Total Missing","Percent Missing"))        
+for(i in 1:nrow(m)){
+    l = length(d[,i])
+    u = length(which(is.na(d[,i])))
+    m[i,"Total Missing"] = u
+    m[i,"Percent Missing"] = round(u/l,digits=4)
+}
+m[m[,"Percent Missing"]!=0,]
+
+```
+
+```{r univariate_EDA, echo=FALSE,cache=TRUE}
+attach(d)
+par(mfrow=c(2,2)) #change output to 2X2
+barplot(table(Store),main="Store",las=2)
+barplot(table(DayOfWeek),main="Day Of Week",las=2)
+hist(Customers,col="grey",main="Customers")
+barplot(table(Open),main="Open",las=2)
+barplot(table(Promo),main="Promo",las=2)
+barplot(table(StateHoliday),main="State Holiday",las=2)
+barplot(table(SchoolHoliday),main="School Holiday",las=2)
+barplot(table(StoreType),main="Store Type",las=2)
+barplot(table(Assortment),main="Assortment",las=2)
+hist(CompetitionDistance,col="grey",main="Comp Distance")
+
+```
+
+```{r bivariate_plots1,echo=FALSE,cache=TRUE}
+attach(d)
+bp = geom_boxplot() #assign the geom to a variable to simplify code
+noleg = theme(legend.position="none")
+
+ggplot(d,aes(factor(Store),Sales))+bp+ggtitle("Sales by Store")
+ggplot(d,aes(factor(DayOfWeek),Sales,fill=DayOfWeek))+bp+ggtitle("Sales by Day of Week")+noleg
+qplot(Customers,Sales,d,main="Sales by Total Customers")
+ggplot(d,aes(factor(Open),Sales,fill=Open))+bp+ggtitle("Sales by Open")
+ggplot(d,aes(factor(Promo),Sales,fill=Promo))+bp+ggtitle("Sales by Promo")
+ggplot(d,aes(factor(StateHoliday),Sales,fill=StateHoliday))+bp+ggtitle("Sales by State Holiday")
+ggplot(d,aes(factor(SchoolHoliday),Sales,fill=SchoolHoliday))+bp+ggtitle("Sales by School Holiday")
+ggplot(d,aes(factor(StoreType),Sales,fill=StoreType))+bp+ggtitle("Sales by Store Type")
+ggplot(d,aes(factor(Assortment),Sales,fill=Assortment))+bp+ggtitle("Sales by Assortment")
+qplot(CompetitionDistance,Sales,d,main="Sales by Competition Distance")
+qplot(daysdiff,Sales,d,main="Sales by DateDiff")
+#qplot(datetest,Sales,d,main="Sales by DAte Test")
+
+
+d[d$Store=="6",]
+
+```
+
