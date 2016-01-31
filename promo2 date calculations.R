@@ -46,9 +46,10 @@ d$IsPromo2Valid <- ifelse(
   ,1,0
 )
 
+
 require(ggplot2)
 ggplot(d,aes(factor(IsPromo2Valid),Sales,fill=IsPromo2Valid))+geom_boxplot()+ggtitle("Sales by Promo2")
 
 
-
+#test test test
 
