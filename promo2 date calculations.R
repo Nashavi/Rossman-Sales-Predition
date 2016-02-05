@@ -1,6 +1,7 @@
-#read in the data"
-sales <- read.csv("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum/train.csv")
-stores <- read.csv("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum/stores.csv")
+#set working directory 
+setwd("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum")
+sales <- read.csv("train.csv")
+stores <- read.csv("stores.csv")
 
 stores$Promo2SinceWeek
 

@@ -1,3 +1,6 @@
+#set working directory 
+setwd("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum")
+
 require(lubridate)
 
 date <- as.factor(seq(as.Date("2008/01/01"),as.Date("2016/12/31"),"days"))
@@ -22,10 +25,11 @@ date.lookup_by_year_weekday <- function(y,wn,wd) {
   return(as.Date(newdate)) #give back the date
 }
 
-stores <- read.csv("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum/stores.csv")
+stores <- read.csv(file="stores.csv")
 attach(stores)
 
 stores$CompetitionOpenDate <- as.Date(paste(CompetitionOpenSinceYear,CompetitionOpenSinceMonth,"01",sep = "-"))
+stores$Promo2StartDate <- as.Date(Sys.Date())
 
 for(i in 1:length(stores$Store)){
   y <- as.integer(ifelse(is.na(stores[i,"Promo2SinceYear"])=="TRUE",2016,stores[i,"Promo2SinceYear"]))
@@ -33,5 +37,6 @@ for(i in 1:length(stores$Store)){
   p2d <- date.lookup_by_year_weekday(y,wn,"Mon")
   stores$Promo2StartDate[i] <- as.Date(p2d)
 }
-stores$Promo2StartDate <- as.Date(Promo2StartDate)
+stores$Promo2StartDate <- as.Date(ifelse(is.na(stores$Promo2SinceYear)
+                                         ,NA,stores$Promo2StartDate),origin="1970-01-01")
   
