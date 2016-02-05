@@ -2,6 +2,8 @@
 sales <- read.csv("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum/train.csv")
 stores <- read.csv("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum/stores.csv")
 
+stores$Promo2SinceWeek
+
 #derive promo2 month/days from promo2 week
 stores$Promo2SinceMonth <- ceiling(stores$Promo2SinceWeek /52*12)
 stores$Promo2SinceDay <- (stores$Promo2SinceWeek * 7) - 6 #default to the start of the week
