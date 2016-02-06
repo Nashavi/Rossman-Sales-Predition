@@ -1,6 +1,6 @@
 #read in the data"
-#sales <- read.csv("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum/train.csv")
-stores <- read.csv("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum/stores.csv")
+
+stores <- read.csv("stores.csv")
 
 m = matrix(data=NA,nrow=length(names(stores)),ncol=2)
 dimnames(m) = list(names(stores),c("Total Missing","Percent Missing"))        

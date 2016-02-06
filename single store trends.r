@@ -1,8 +1,8 @@
 #read in the data"
-sales <- read.csv("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum/train.csv")
+sales <- read.csv("train.csv")
+stores <- read.csv("stores.csv")
 
-stores <- read.csv("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum/stores.csv")
-
+#grab a single store
 stores <- stores[stores$Store==1,]
 
 #derive promo2 month/days from promo2 week
