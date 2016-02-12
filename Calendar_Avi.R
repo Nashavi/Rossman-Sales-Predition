@@ -10,3 +10,4 @@ calendar$week<-week(calendar$dates)
 calendar$weekdays<-weekdays(calendar$dates)
 calendar$dayofweek<-wday(calendar$dates)
 
+chacl
