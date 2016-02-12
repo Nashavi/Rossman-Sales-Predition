@@ -6,8 +6,6 @@ output: html_document
 ---
 ```{r global_options, echo=FALSE}
 knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
-#set working directory here!
-#setwd("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum")
 ```
 
 
