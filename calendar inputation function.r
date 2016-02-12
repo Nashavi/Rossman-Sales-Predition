@@ -1,5 +1,4 @@
 #set working directory 
-setwd("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum")
 
 require(lubridate)
 
