@@ -6,6 +6,8 @@ output: html_document
 ---
 ```{r global_options, echo=FALSE}
 knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+#set working directory here!
+#setwd("C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/practicum")
 ```
 
 
@@ -16,19 +18,9 @@ library(boot)
 ```
 
 ```{r data_import}
-File = NULL #dynamically pull file based on laptop vs. desktop 
-File = ifelse(Sys.info()["nodename"]=="ZUMA",
-              "C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/rossman_data/rossman_data/train.csv",
-              "E:/OneDrive/UCD/Analytics/")
-sales = read.csv(File)
-File = NULL #dynamically pull file based on laptop vs. desktop 
-File = ifelse(Sys.info()["nodename"]=="ZUMA",
-              "C:/Users/Kyle/OneDrive/UCD/Analytics/Practicum/rossman_data/rossman_data/stores.csv",
-              "E:/OneDrive/UCD/Analytics/")
-stores = read.csv(File)
-
+sales = read.csv("train.csv")
+stores = read.csv("stores.csv")
 d <- merge(x=sales,y=stores, by= "Store",all.x = TRUE)
-
 ```
 
 
