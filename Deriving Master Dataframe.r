@@ -24,9 +24,11 @@ date.lookup_by_year_weekday <- function(y,wn,wd) {
 
 #now derive some features on the stores dataframe 
 stores <- read.csv(file="stores.csv",na.strings = c(""))
+
 attach(stores)
 
 #assume the comp open date is the first of the month - a simple combo of year - month - 01
+### THERE IS A STORE WITH A COMP OPEN DATE OF 1900! be careful!
 stores$CompetitionOpenDate <- as.Date(paste(CompetitionOpenSinceYear,CompetitionOpenSinceMonth,"01",sep = "-"))
 
 #figure out the promo2 start date: 
@@ -106,7 +108,7 @@ d$Promo2Valid <- ifelse(d$PromoInterval==d$SalesMonthInterval & d$Promo2Valid==1
 d$Promo2Valid <- as.factor(d$Promo2Valid)
 
 
-
+write.csv(d,file="MasterDataSet.csv")
 
 
 
