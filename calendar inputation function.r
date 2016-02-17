@@ -24,7 +24,7 @@ date.lookup_by_year_weekday <- function(y,wn,wd) {
   return(as.Date(newdate)) #give back the date
 }
 
-stores <- read.csv(file="stores.csv")
+stores <- read.csv(file="stores.csv",na.strings = c(""))
 attach(stores)
 
 stores$CompetitionOpenDate <- as.Date(paste(CompetitionOpenSinceYear,CompetitionOpenSinceMonth,"01",sep = "-"))
