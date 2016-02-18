@@ -1,3 +1,4 @@
+
 d <- read.csv("MasterDataSet.csv")
 attach(d)
 d <- d[-1]
@@ -50,6 +51,12 @@ qplot(Customers,Sales,d,col=Promo)
 
 qplot(WeeksSinceCompOpened,Sales,d)
 qplot(WeeksSinceCompOpened,Sales,d,col=StoreType)
+qplot(WeeksSinceCompOpened,Sales,d,col=Promo)
+ggplot(d,aes(WeeksSinceCompOpened,Sales))+geom_point()+facet_wrap(~Promo)
+
+#summary(lm(Sales~WeeksSinceCompOpened,d))
+# not a very good predictor 
+
 
 #time series stuff
 ggplot(d,aes(factor(year),Sales,fill=year))+bp+ggtitle("Sales by Year")
@@ -72,7 +79,7 @@ o <- d[d$StoreType=="a" & d$Customers>6000,] #whats going on with that outlier?
 #1/22/2013, store type a, open, promo = yes, no holidays, 
 o <- d[d$StoreType=="a" & d$year==2013 & d$Open==1 & d$Promo==1 & d$month=="1",]
 #what happened on this date that drove so many customers into that store? Is it worthwhile? 
-qplot(o$Customers,o$Sales,col=o$Assortment)
+#qplot(o$Customers,o$Sales,col=o$)
 
 ### CHECK OUT AGGREGATE TRENDS HERE - sub in your group to first part, see the agg trend below
 tsales <- as.data.frame(aggregate(d$Sales,by=list(d$month),FUN=mean))
