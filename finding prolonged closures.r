@@ -1,7 +1,9 @@
 require(lubridate)
 d <- read.csv("masterdataset.csv")
 s <- read.csv("stores.csv")
+attach(d)
 d<- d[d$Open=="0",] #grab only those values where a store was closed
+d<- d[d$dayofWeek %in% c(1,2,3,4,5),] #eliminate saturdays and sundays
 d<- d[d$StateHoliday=="0",] #grab only values where there wasn't a holiday
 
 d$Date <- as.Date(d$Date) #format as a date
@@ -12,7 +14,7 @@ rm(s)
 
 d$pc <- 0
 
-for(j in 1:length(stores)){ 
+d$pc <- as.integer(d$pc)for(j in 1:length(stores)){ 
   sd <- d[d$Store==j,]              #create a sub dataframe for the jth store
   if (length(sd$X)!=0){             #check to make sure there is data in the sub dataframe
     sd <- sd[order(sd$Date),]       #make sure the data is sorted by date
@@ -30,13 +32,16 @@ for(j in 1:length(stores)){
   }
 }
 
-d$pc <- as.integer(d$pc)
 
 pclosures <- d[d$pc==1,] #which values got flagged?
 
 pcstores <- unique(pclosures$Store)
 
 pcstores #stores with prolonged closures
+ 
+##### TO DO STILL: 
+# 1) use this info to find the last date of a closure
+# 2) flag the next day following a closure as a "grand opening"
 
 
 
