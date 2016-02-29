@@ -2,6 +2,8 @@ require(DataCombine)
 
 d <- read.csv("Datasets/MasterDataWithWeather.csv")
 
+d<-d[,-2]
+
 d<-d[order(d$Store,d$Date),] #order by store and then dtate
 d$Date <- as.Date(d$Date)
 
@@ -54,4 +56,5 @@ levels(dlagged$SchoolHoliday_L5)<-c("0","a","b","c")
 dlagged<- slide(dlagged, Var = "Promo2Valid", GroupVar = "Store", NewVar= "Promo2Valid_L1", slideBy = 1)
 dlagged<- slide(dlagged, Var = "Promo2Valid_L1", GroupVar = "Store", NewVar= "Promo2Valid_L2",slideBy = 1)
 
+write.csv(dlagged,file="Datasets/GrandMasterData.csv")
 
