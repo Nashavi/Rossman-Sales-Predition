@@ -23,9 +23,13 @@ date.lookup_by_year_weekday <- function(y,wn,wd) {
 }
 
 #now derive some features on the stores dataframe 
-stores <- read.csv(file="stores.csv",na.strings = c(""))
+stores <- read.csv(file="Datasets/CSV Files/stores.csv",na.strings = c("","NA"))
 
 attach(stores)
+stores <- stores[,-1]
+#stores$Store <- as.factor(stores$Store)
+#stores$Promo2 <- as.factor(stores$Promo2)
+stores$State <- stores$StateCode
 
 #assume the comp open date is the first of the month - a simple combo of year - month - 01
 ### THERE IS A STORE WITH A COMP OPEN DATE OF 1900! be careful!
@@ -48,40 +52,77 @@ stores$Promo2StartDate <- as.Date(ifelse(is.na(stores$Promo2SinceYear)
 
 ### now lets add some additional features to the sales data 
 #read in the sales data
-sales = read.csv("train.csv",na.strings = c(""))
+
+sales = read.csv("Datasets/CSV Files/train.csv",na.strings = c("","NA"))
 attach(sales)
+sales$Store <- as.factor(sales$Store)
+#sales$Date  <- as.Date(sales$Date)
+sales$Open <- as.factor(sales$Open)
+sales$Promo <- as.factor(sales$Promo)
+sales$StateHoliday <- as.factor(sales$StateHoliday)
+sales$SchoolHoliday <- as.factor(sales$SchoolHoliday)
+
 # since we already derived date parts in the calendar dataframe, lets grab that info via a merge: 
 sales <- merge(sales,calendar,by="Date",all.x = TRUE)
 #now just remove duplicated columns from merge
-sales = sales[,-which(names(sales) %in% c("date","DayOfWeek"))] 
+#sales = sales[,-which(names(sales) %in% c("date","DayOfWeek"))] 
 
 
 #now merge sales and stores into a master dataframe
 d <- merge(x=sales,y=stores, by= "Store",all.x = TRUE)
 
+#d[d$Id==907,]
+d$Date <- as.Date(d$Date)
+d <- d[order(d$Id),]
+d <- d[,-which(names(d) %in% c("DayOfWeek","weekday","dayofYear","StateCode","StateName","Customers"))]
+d$dayofWeek <- as.factor(d$dayofWeek)
+d$dayofMonth <- as.factor(d$dayofMonth)
+d$weekNum <- as.factor(d$weekNum)
+d$month <- as.factor(d$month)
+d$quarter <- as.factor(d$quarter)
+d$year <- as.factor(d$year)
+d$CompetitionOpenSinceMonth <- as.factor(d$CompetitionOpenSinceMonth)
+d$CompetitionOpenSinceYear <- as.factor(d$CompetitionOpenSinceYear)
+d$Promo2 <- as.factor(d$Promo2)
+d$Promo2SinceWeek <- as.factor(d$Promo2SinceWeek)
+d$Promo2SinceYear <- as.factor(d$Promo2SinceYear)
 
+TrainData <- d
+
+save(TrainData,file="Datasets/Train.RData",compress=TRUE)
+
+load("Datasets/Train.RData")
+d <- TrainData
+rm(TrainData)
+#d[d$Id==907,]
+#d<-d[order(d$Id),]
 #fix incorrect datatypes
 attach(d)
+d <- d[order(d$Id),]
 #options(contrasts = rep ("contr.treatment", 2)) #set default contrast treatment for ordinal factors
-d$Store <- as.factor(Store)
+#d$Store <- as.factor(Store)
 #d$Date <- as.Date(Date)
-d$Open <- as.factor(Open)
-d$Promo <- as.factor(Promo)
-d$StateHoliday <- as.factor(StateHoliday)
-d$SchoolHoliday <- as.factor(StateHoliday)
-d$dayofYear <- as.factor(dayofYear)
-d$dayofWeek <- as.factor(dayofWeek)
-d$weekday <- as.factor(weekday)
-d$dayofMonth <- as.factor(dayofMonth)
-d$weekNum <- as.factor(weekNum)
-d$month <- as.factor(month)
-d$quarter <- as.factor(quarter)
-d$year <- as.factor(year)
-d$CompetitionOpenSinceMonth <- as.factor(CompetitionOpenSinceMonth)
-d$CompetitionOpenSinceYear <- as.factor(CompetitionOpenSinceYear)
-d$Promo2 <- as.factor(Promo2)
-d$Promo2SinceWeek <- as.factor(Promo2SinceWeek)
-d$Promo2SinceYear <- as.factor(Promo2SinceYear)
+#d$Open <- as.character(d$Open)
+#d$Open <- as.factor(Open)
+#d$Promo <- as.character(d$Promo)
+#d$Promo <- as.factor(Promo)
+#d$StateHoliday <- as.character(d$StateHoliday)
+#d$StateHoliday <- as.factor(StateHoliday)
+#d$SchoolHoliday <- as.character(d$SchoolHoliday)
+#d$SchoolHoliday <- as.factor(StateHoliday)
+# d$dayofYear <- as.factor(dayofYear)
+# d$dayofWeek <- as.factor(dayofWeek)
+# d$weekday <- as.factor(weekday)
+# d$dayofMonth <- as.factor(dayofMonth)
+# d$weekNum <- as.factor(weekNum)
+# d$month <- as.factor(month)
+# d$quarter <- as.factor(quarter)
+# d$year <- as.factor(year)
+# d$CompetitionOpenSinceMonth <- as.factor(CompetitionOpenSinceMonth)
+# d$CompetitionOpenSinceYear <- as.factor(CompetitionOpenSinceYear)
+# d$Promo2 <- as.factor(Promo2)
+# d$Promo2SinceWeek <- as.factor(Promo2SinceWeek)
+# d$Promo2SinceYear <- as.factor(Promo2SinceYear)
 
 #######Feature Engineering
 ## Derive number of weeks between sale date and competition open date
@@ -107,9 +148,14 @@ d$Promo2Valid <- ifelse(d$PromoInterval==d$SalesMonthInterval & d$Promo2Valid==1
 
 d$Promo2Valid <- as.factor(d$Promo2Valid)
 
+#d <- d[,-which(names(d) %in% c("DayOfWeek","dayofYear","weekday","X"))]
 
-write.csv(d,file="MasterDataSet.csv")
 
+TrainData <- d
+rm(d)
+save(TrainData,file="Datasets/Train.RData",compress=TRUE)
+
+TestData[TestData$Id==907,]
 
 
 
