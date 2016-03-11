@@ -22,13 +22,13 @@ rm(eval)
 
 fitControl = trainControl(method = 'cv'
                           , number=3
-                          ,summaryFunction=summaryFunction)
+                          ,summaryFunction=defaultSummary)
 gbmGrid =  expand.grid(interaction.depth= 3,#seq(2,3,by=1), #which tree depth values to try
                        n.trees = 5000, #seq(4000,5000,by=200), #how many values of n.trees to try
                        shrinkage = c(0.1),
                        n.minobsinnode=20)
 gbmFit = train(Sales ~ .
-               ,data = training
+               ,data = d
                ,method='gbm'
                ,trControl=fitControl
                ,metric="RMSE"
