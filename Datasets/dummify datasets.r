@@ -46,92 +46,67 @@ rm(d)
 Store <- training$Store
 State <- training$State
 Open <- training$Open
-training <- training[,-which(names(training) %in% c("Store","State","Open"))]
-dmyCoding <- dummyVars(Sales~.,data=training)
+Sales <- training$Sales
+training <- training[,-which(names(training) %in% c("Store","State","Open","Sales"))]
+dmyCoding <- dummyVars(~.,data=training)
 training <- data.frame(predict(dmyCoding,newdata = training))
 training <- cbind(Store,training)
 training <- cbind(State,training)
 training <- cbind(Open,training)
+training <- cbind(Sales,training)
 save(training,file="Datasets/Training.RData",compress = TRUE)
 
 Store <- testing$Store
 State <- testing$State
 Open <- testing$Open
-testing <- testing[,-which(names(testing) %in% c("Store","State","Open"))]
+Sales <- testing$Sales
+testing <- testing[,-which(names(testing) %in% c("Store","State","Open","Sales"))]
 testing <- data.frame(predict(dmyCoding,newdata = testing))
 testing <- cbind(Store,testing)
 testing <- cbind(State,testing)
 testing <- cbind(Open,testing)
+testing <- cbind(Sales,testing)
 save(testing,file="Datasets/Testing.RData",compress = TRUE)
 
 Store <- eval$Store
 State <- eval$State
 Open <- eval$Open
-eval <- eval[,-which(names(eval) %in% c("Store","State","Open"))]
+Sales <- eval$Sales
+eval <- eval[,-which(names(eval) %in% c("Store","State","Open","Sales"))]
 eval <- data.frame(predict(dmyCoding,newdata = eval))
 eval <- cbind(Store,eval)
 eval <- cbind(State,eval)
 eval <- cbind(Open,eval)
+eval <- cbind(Sales,eval)
 save(eval,file="Datasets/Eval.RData",compress = TRUE)
 
-
-eval <- data.frame(predict(dmy,newdata = eval))
-
-testing <- cbind(testing,Store)
-testing <- cbind(testing,State)
-
-save(testing,file="Datasets/Testing.RData",compress = TRUE)
-
-rm(testing)
-
-FinalTestData <- t
-
-save(FinalTestData,file="Datasets/FinalTestDummified.RData",compress = TRUE)
-
-
-
-training <- cbind(training,state)
-training$state
-
-
-
-
-testing <- data.frame(predict(dmy,newdata = testing))
-eval <- data.frame(predict(dmy,newdata = eval))
-
-
-save(training,file="Datasets/Training.RData",compress = TRUE)
-save(testing,file="Datasets/Testing.RData",compress=TRUE)
-save(eval,file="Datasets/Eval.RData",compress = TRUE)
+rm(eval)
 rm(training)
 rm(testing)
-rm(eval)
 
-load("Datasets/Eval.RData")
-head(eval$year.2013)
+Store <- t$Store
+State <- t$State
+Open <- t$Open
+Id <- t$Id
+t <- t[,-which(names(t) %in% c("Store","State","Open","Id"))]
 
-
-load("Modeling/ST_gbmModel.RData")
-
-test.preds <- predict(gbmFit,newdata = t)
-
-t$StateHoliday.0 <- 1
-t$StateHoliday.1 <- 0
-t$year.2013 <- 0
-t$year.2014 <- 0
-t$year.2015 <- 1
-
-
+# State Holiday == 0, Year = 2015
 t <- t[,-which(names(t) %in% c("StateHoliday","year"))]
-
-dmy <- dummyVars("~.",data=eval)
-t <- data.frame(predict(dmy,newdata = t))
-
-
-
-
-
-
+dmyCoding <- dummyVars(~.,data=t)
+t <- data.frame(predict(dmyCoding,newdata = t))
+t$StateHoliday.0 = 1
+t$StateHoliday.1 = 0
+t$year.2015 = 1
+t$year.2014 = 0
+t$year.2013 = 0
 
 
-rm(dmy)
+
+t <- cbind(Store,t)
+t <- cbind(State,t)
+t <- cbind(Open,t)
+t <- cbind(Id,t)
+FinalTestData <- t
+
+save(FinalTestData,file="Datasets/FinalTestData.RData",compress = TRUE)
+

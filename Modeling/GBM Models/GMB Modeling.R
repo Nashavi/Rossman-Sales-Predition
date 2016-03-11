@@ -3,36 +3,32 @@
 # Load Default Setup 
 source("Modeling/Modeling Setup.R")
 
+st <- "ST" 
 
-d <- training[training$State.ST==1,]
+d <- training[training$State==st & training$Open==1 & training$Sales!=0,]
+rm(training)
 
+ts <- testing[testing$State==st & testing$Open==1 & testing$Sales!=0,]
+rm(testing)
 
-d<- d[,-which(names(d) %in% c("State.BBMVTH","State.NWRP","State.BEHBHHNISH","State.SN"))]
-d<- d[,-which(names(d) %in% c("StateBW","State.BY","State.HE","State.ST"))]
+e <- eval[eval$State==st & eval$Open==1 & eval$Sales!=0,]
+rm(eval)
 
-
-load("Modeling/GBM Models/ST_gbmModel.RData")
-
-plot(gbmFit)
-r = which.min(gbmFit$results[,"RMSE"])#which combo had the best RMSE?
-ntrees = gbmFit$results[r,"n.trees"] #what was the # of trees?
-depth = gbmFit$results[r,"interaction.depth"] #how deep were the trees?
-shrink = gbmFit$results[r,"shrinkage"] #what was the shrinkage?
-
-
-gbmFit_new <- gbm(Sales~.,
-                  data = d,
-                  distribution = "gaussian",
-                  n.trees = 5000,
-                  interaction.depth = 3,
-                  n.minobsinnode = 20,
-                  shrinkage = 0.1,
-                  cv.folds=3,
-                  keep.data = TRUE,
-                  verbose = "TRUE")
-
-
-
+fitControl = trainControl(method = 'cv'
+                          , number=3
+                          ,summaryFunction=oldSumm)
+gbmGrid =  expand.grid(interaction.depth= seq(2,3,by=1), #which tree depth values to try
+                       n.trees = seq(4000,5000,by=200), #how many values of n.trees to try
+                       shrinkage = c(0.1),
+                       n.minobsinnode=20)
+gbmFit = train(Sales ~ .
+               ,data = training
+               ,method='gbm'
+               ,trControl=fitControl
+               ,metric="RMSE"
+              
+               ,tuneGrid=gbmGrid
+               ,verbose=TRUE) 
 
 
 
