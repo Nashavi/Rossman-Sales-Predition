@@ -3,7 +3,10 @@
 # Load Default Setup 
 source("Modeling/Modeling Setup.R")
 
-st <- "ST" 
+states <- unique(training$State)
+states
+
+st <- "BEHBHHNISH" 
 
 d <- training[training$State==st & training$Open==1 & training$Sales!=0,]
 d$Sales <- log(d$Sales)
@@ -23,8 +26,8 @@ rm(eval)
 fitControl = trainControl(method = 'cv'
                           , number=3
                           ,summaryFunction=defaultSummary)
-gbmGrid =  expand.grid(interaction.depth= 3,#seq(2,3,by=1), #which tree depth values to try
-                       n.trees = 5000, #seq(4000,5000,by=200), #how many values of n.trees to try
+gbmGrid =  expand.grid(interaction.depth= seq(2,3,by=1), #which tree depth values to try
+                       n.trees = seq(1000,5000,by=500), #how many values of n.trees to try
                        shrinkage = c(0.1),
                        n.minobsinnode=20)
 gbmFit = train(Sales ~ .
@@ -35,6 +38,21 @@ gbmFit = train(Sales ~ .
                ,tuneGrid=gbmGrid
                ,verbose=TRUE) 
 
+save(gbmFit,file="Modeling/GBM Models/BEHBHHNISH_GBMModel.RData",compress = TRUE)
 
+summary(gbmFit)[1:10,]
+gbmFit$bestTune #what was the best tune?
+plot(gbmFit)
+gbmFit$results
+r = which.min(gbmFit$results[,"RMSE"])#which combo had the best RMSE?
+ntrees = gbmFit$results[r,"n.trees"] #what was the # of trees?
+depth = gbmFit$results[r,"interaction.depth"] #how deep were the trees?
+shrink = gbmFit$results[r,"shrinkage"] #what was the shrinkage?
 
+test.preds <- predict(gbmFit,newdata = ts)
+eval.preds <- predict(gbmFit,newdata = e)
 
+sqrt(mean((ts$Sales-test.preds)^2))
+sqrt(mean((e$Sales-eval.preds)^2))
+
+#save(gbmFit,file="Modeling/GBM Models/TestGBMModel.RData",compress = TRUE)

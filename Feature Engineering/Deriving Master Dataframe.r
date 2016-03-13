@@ -35,6 +35,8 @@ stores$State <- stores$StateCode
 ### THERE IS A STORE WITH A COMP OPEN DATE OF 1900! be careful!
 stores$CompetitionOpenDate <- as.Date(paste(CompetitionOpenSinceYear,CompetitionOpenSinceMonth,"01",sep = "-"))
 
+
+
 #figure out the promo2 start date: 
 #first, set it to today's date 
 stores$Promo2StartDate <- as.Date(Sys.Date())
@@ -71,9 +73,13 @@ sales <- merge(sales,calendar,by="Date",all.x = TRUE)
 #now merge sales and stores into a master dataframe
 d <- merge(x=sales,y=stores, by= "Store",all.x = TRUE)
 
-#d[d$Id==907,]
+d[d$Id==907,]
 d$Date <- as.Date(d$Date)
 d <- d[order(d$Id),]
+Id <- d$Id
+d<-d[,-3]
+d<- cbind(Id,d)
+d[d$Id==907,]
 d <- d[,-which(names(d) %in% c("DayOfWeek","weekday","dayofYear","StateCode","StateName","Customers"))]
 d$dayofWeek <- as.factor(d$dayofWeek)
 d$dayofMonth <- as.factor(d$dayofMonth)
@@ -87,15 +93,15 @@ d$Promo2 <- as.factor(d$Promo2)
 d$Promo2SinceWeek <- as.factor(d$Promo2SinceWeek)
 d$Promo2SinceYear <- as.factor(d$Promo2SinceYear)
 
-TrainData <- d
+TestData <- d
 
-save(TrainData,file="Datasets/Train.RData",compress=TRUE)
+save(TestData,file="Datasets/Test.RData",compress=TRUE)
 
-load("Datasets/Train.RData")
-d <- TrainData
-rm(TrainData)
-#d[d$Id==907,]
-#d<-d[order(d$Id),]
+load("Datasets/Test.RData")
+d <- TestData
+rm(TestData)
+d[d$Id==907,]
+d<-d[order(d$Id),]
 #fix incorrect datatypes
 attach(d)
 d <- d[order(d$Id),]
@@ -150,6 +156,13 @@ d$Promo2Valid <- as.factor(d$Promo2Valid)
 
 #d <- d[,-which(names(d) %in% c("DayOfWeek","dayofYear","weekday","X"))]
 
+
+d$StateHoliday <- factor(d$StateHoliday,levels = c("0","1"),labels = c("0","1"))
+levels(d$year) <- c("2015","2014","2013")
+
+
+
+d$WeeksSinceCompOpened <- as.integer(d$WeeksSinceCompOpened)
 
 TrainData <- d
 rm(d)

@@ -1,389 +1,68 @@
-
+load("Modeling/GBM Models/BW_GBMModel.RData")
 load("Datasets/FinalTestData.RData")
-load("Modeling/GBM Models/ST_gbmModel.RData")
-
 d <- FinalTestData
 rm(FinalTestData)
 
-d$StateHoliday.0 <- 1
-d$StateHoliday.1 <- 0
-
-d$dayofYear.1 <- 0
-d$dayofYear.2 <- 0
-d$dayofYear.3 <- 0
-d$dayofYear.4 <- 0
-d$dayofYear.5 <- 0
-d$dayofYear.6 <- 0
-d$dayofYear.7 <- 0
-d$dayofYear.8 <- 0
-d$dayofYear.9 <- 0
-d$dayofYear.10 <- 0
-d$dayofYear.11 <- 0
-d$dayofYear.12 <- 0
-d$dayofYear.13 <- 0
-d$dayofYear.14 <- 0
-d$dayofYear.15 <- 0
-d$dayofYear.16 <- 0
-d$dayofYear.17 <- 0
-d$dayofYear.18 <- 0
-d$dayofYear.19 <- 0
-d$dayofYear.20 <- 0
-d$dayofYear.21 <- 0
-d$dayofYear.22 <- 0
-d$dayofYear.23 <- 0
-d$dayofYear.24 <- 0
-d$dayofYear.25 <- 0
-d$dayofYear.26 <- 0
-d$dayofYear.27 <- 0
-d$dayofYear.28 <- 0
-d$dayofYear.29 <- 0
-d$dayofYear.30 <- 0
-d$dayofYear.31 <- 0
-d$dayofYear.32 <- 0
-d$dayofYear.33 <- 0
-d$dayofYear.34 <- 0
-d$dayofYear.35 <- 0
-d$dayofYear.36 <- 0
-d$dayofYear.37 <- 0
-d$dayofYear.38 <- 0
-d$dayofYear.39 <- 0
-d$dayofYear.40 <- 0
-d$dayofYear.41 <- 0
-d$dayofYear.42 <- 0
-d$dayofYear.43 <- 0
-d$dayofYear.44 <- 0
-d$dayofYear.45 <- 0
-d$dayofYear.46 <- 0
-d$dayofYear.47 <- 0
-d$dayofYear.48 <- 0
-d$dayofYear.49 <- 0
-d$dayofYear.50 <- 0
-d$dayofYear.51 <- 0
-d$dayofYear.52 <- 0
-d$dayofYear.53 <- 0
-d$dayofYear.54 <- 0
-d$dayofYear.55 <- 0
-d$dayofYear.56 <- 0
-d$dayofYear.57 <- 0
-d$dayofYear.58 <- 0
-d$dayofYear.59 <- 0
-d$dayofYear.60 <- 0
-d$dayofYear.61 <- 0
-d$dayofYear.62 <- 0
-d$dayofYear.63 <- 0
-d$dayofYear.64 <- 0
-d$dayofYear.65 <- 0
-d$dayofYear.66 <- 0
-d$dayofYear.67 <- 0
-d$dayofYear.68 <- 0
-d$dayofYear.69 <- 0
-d$dayofYear.70 <- 0
-d$dayofYear.71 <- 0
-d$dayofYear.72 <- 0
-d$dayofYear.73 <- 0
-d$dayofYear.74 <- 0
-d$dayofYear.75 <- 0
-d$dayofYear.76 <- 0
-d$dayofYear.77 <- 0
-d$dayofYear.78 <- 0
-d$dayofYear.79 <- 0
-d$dayofYear.80 <- 0
-d$dayofYear.81 <- 0
-d$dayofYear.82 <- 0
-d$dayofYear.83 <- 0
-d$dayofYear.84 <- 0
-d$dayofYear.85 <- 0
-d$dayofYear.86 <- 0
-d$dayofYear.87 <- 0
-d$dayofYear.88 <- 0
-d$dayofYear.89 <- 0
-d$dayofYear.90 <- 0
-d$dayofYear.91 <- 0
-d$dayofYear.92 <- 0
-d$dayofYear.93 <- 0
-d$dayofYear.94 <- 0
-d$dayofYear.95 <- 0
-d$dayofYear.96 <- 0
-d$dayofYear.97 <- 0
-d$dayofYear.98 <- 0
-d$dayofYear.99 <- 0
-d$dayofYear.100 <- 0
-d$dayofYear.101 <- 0
-d$dayofYear.102 <- 0
-d$dayofYear.103 <- 0
-d$dayofYear.104 <- 0
-d$dayofYear.105 <- 0
-d$dayofYear.106 <- 0
-d$dayofYear.107 <- 0
-d$dayofYear.108 <- 0
-d$dayofYear.109 <- 0
-d$dayofYear.110 <- 0
-d$dayofYear.111 <- 0
-d$dayofYear.112 <- 0
-d$dayofYear.113 <- 0
-d$dayofYear.114 <- 0
-d$dayofYear.115 <- 0
-d$dayofYear.116 <- 0
-d$dayofYear.117 <- 0
-d$dayofYear.118 <- 0
-d$dayofYear.119 <- 0
-d$dayofYear.120 <- 0
-d$dayofYear.121 <- 0
-d$dayofYear.122 <- 0
-d$dayofYear.123 <- 0
-d$dayofYear.124 <- 0
-d$dayofYear.125 <- 0
-d$dayofYear.126 <- 0
-d$dayofYear.127 <- 0
-d$dayofYear.128 <- 0
-d$dayofYear.129 <- 0
-d$dayofYear.130 <- 0
-d$dayofYear.131 <- 0
-d$dayofYear.132 <- 0
-d$dayofYear.133 <- 0
-d$dayofYear.134 <- 0
-d$dayofYear.135 <- 0
-d$dayofYear.136 <- 0
-d$dayofYear.137 <- 0
-d$dayofYear.138 <- 0
-d$dayofYear.139 <- 0
-d$dayofYear.140 <- 0
-d$dayofYear.141 <- 0
-d$dayofYear.142 <- 0
-d$dayofYear.143 <- 0
-d$dayofYear.144 <- 0
-d$dayofYear.145 <- 0
-d$dayofYear.146 <- 0
-d$dayofYear.147 <- 0
-d$dayofYear.148 <- 0
-d$dayofYear.149 <- 0
-d$dayofYear.150 <- 0
-d$dayofYear.151 <- 0
-d$dayofYear.152 <- 0
-d$dayofYear.153 <- 0
-d$dayofYear.154 <- 0
-d$dayofYear.155 <- 0
-d$dayofYear.156 <- 0
-d$dayofYear.157 <- 0
-d$dayofYear.158 <- 0
-d$dayofYear.159 <- 0
-d$dayofYear.160 <- 0
-d$dayofYear.161 <- 0
-d$dayofYear.162 <- 0
-d$dayofYear.163 <- 0
-d$dayofYear.164 <- 0
-d$dayofYear.165 <- 0
-d$dayofYear.166 <- 0
-d$dayofYear.167 <- 0
-d$dayofYear.168 <- 0
-d$dayofYear.169 <- 0
-d$dayofYear.170 <- 0
-
-d$dayofYear.171 <- 1
-d$dayofYear.172 <- 1
-d$dayofYear.173 <- 1
-d$dayofYear.174 <- 1
-d$dayofYear.175 <- 1
-d$dayofYear.176 <- 1
-d$dayofYear.177 <- 1
-d$dayofYear.178 <- 1
-d$dayofYear.179 <- 1
-d$dayofYear.180 <- 1
-d$dayofYear.181 <- 1
-d$dayofYear.182 <- 1
-d$dayofYear.183 <- 1
-d$dayofYear.184 <- 1
-d$dayofYear.185 <- 1
-d$dayofYear.186 <- 1
-d$dayofYear.187 <- 1
-d$dayofYear.188 <- 1
-d$dayofYear.189 <- 1
-d$dayofYear.190 <- 1
-d$dayofYear.191 <- 1
-d$dayofYear.192 <- 1
-d$dayofYear.193 <- 1
-d$dayofYear.194 <- 1
-d$dayofYear.195 <- 1
-d$dayofYear.196 <- 1
-d$dayofYear.197 <- 1
-d$dayofYear.198 <- 1
-d$dayofYear.199 <- 1
-d$dayofYear.200 <- 1
-d$dayofYear.201 <- 1
-d$dayofYear.202 <- 1
-d$dayofYear.203 <- 1
-d$dayofYear.204 <- 1
-d$dayofYear.205 <- 1
-d$dayofYear.206 <- 1
-d$dayofYear.207 <- 1
-d$dayofYear.208 <- 1
-d$dayofYear.209 <- 1
-d$dayofYear.210 <- 1
-d$dayofYear.211 <- 1
-d$dayofYear.212 <- 1
+final.preds <- predict(gbmFit,newdata = d)
 
 
-d$dayofYear.213 <- 0
-d$dayofYear.214 <- 0
-d$dayofYear.215 <- 0
-d$dayofYear.216 <- 0
-d$dayofYear.217 <- 0
-d$dayofYear.218 <- 0
-d$dayofYear.219 <- 0
-d$dayofYear.220 <- 0
-d$dayofYear.221 <- 0
-d$dayofYear.222 <- 0
-d$dayofYear.223 <- 0
-d$dayofYear.224 <- 0
-d$dayofYear.225 <- 0
-d$dayofYear.226 <- 0
-d$dayofYear.227 <- 0
-d$dayofYear.228 <- 0
-d$dayofYear.229 <- 0
-d$dayofYear.230 <- 0
-d$dayofYear.231 <- 0
-d$dayofYear.232 <- 0
-d$dayofYear.233 <- 0
-d$dayofYear.234 <- 0
-d$dayofYear.235 <- 0
-d$dayofYear.236 <- 0
-d$dayofYear.237 <- 0
-d$dayofYear.238 <- 0
-d$dayofYear.239 <- 0
-d$dayofYear.240 <- 0
-d$dayofYear.241 <- 0
-d$dayofYear.242 <- 0
-d$dayofYear.243 <- 0
-d$dayofYear.244 <- 0
-d$dayofYear.245 <- 0
-d$dayofYear.246 <- 0
-d$dayofYear.247 <- 0
-d$dayofYear.248 <- 0
-d$dayofYear.249 <- 0
-d$dayofYear.250 <- 0
-d$dayofYear.251 <- 0
-d$dayofYear.252 <- 0
-d$dayofYear.253 <- 0
-d$dayofYear.254 <- 0
-d$dayofYear.255 <- 0
-d$dayofYear.256 <- 0
-d$dayofYear.257 <- 0
-d$dayofYear.258 <- 0
-d$dayofYear.259 <- 0
-d$dayofYear.260 <- 0
-d$dayofYear.261 <- 0
-d$dayofYear.262 <- 0
-d$dayofYear.263 <- 0
-d$dayofYear.264 <- 0
-d$dayofYear.265 <- 0
-d$dayofYear.266 <- 0
-d$dayofYear.267 <- 0
-d$dayofYear.268 <- 0
-d$dayofYear.269 <- 0
-d$dayofYear.270 <- 0
-d$dayofYear.271 <- 0
-d$dayofYear.272 <- 0
-d$dayofYear.273 <- 0
-d$dayofYear.274 <- 0
-d$dayofYear.275 <- 0
-d$dayofYear.276 <- 0
-d$dayofYear.277 <- 0
-d$dayofYear.278 <- 0
-d$dayofYear.279 <- 0
-d$dayofYear.280 <- 0
-d$dayofYear.281 <- 0
-d$dayofYear.282 <- 0
-d$dayofYear.283 <- 0
-d$dayofYear.284 <- 0
-d$dayofYear.285 <- 0
-d$dayofYear.286 <- 0
-d$dayofYear.287 <- 0
-d$dayofYear.288 <- 0
-d$dayofYear.289 <- 0
-d$dayofYear.290 <- 0
-d$dayofYear.291 <- 0
-d$dayofYear.292 <- 0
-d$dayofYear.293 <- 0
-d$dayofYear.294 <- 0
-d$dayofYear.295 <- 0
-d$dayofYear.296 <- 0
-d$dayofYear.297 <- 0
-d$dayofYear.298 <- 0
-d$dayofYear.299 <- 0
-d$dayofYear.300 <- 0
-d$dayofYear.301 <- 0
-d$dayofYear.302 <- 0
-d$dayofYear.303 <- 0
-d$dayofYear.304 <- 0
-d$dayofYear.305 <- 0
-d$dayofYear.306 <- 0
-d$dayofYear.307 <- 0
-d$dayofYear.308 <- 0
-d$dayofYear.309 <- 0
-d$dayofYear.310 <- 0
-d$dayofYear.311 <- 0
-d$dayofYear.312 <- 0
-d$dayofYear.313 <- 0
-d$dayofYear.314 <- 0
-d$dayofYear.315 <- 0
-d$dayofYear.316 <- 0
-d$dayofYear.317 <- 0
-d$dayofYear.318 <- 0
-d$dayofYear.319 <- 0
-d$dayofYear.320 <- 0
-d$dayofYear.321 <- 0
-d$dayofYear.322 <- 0
-d$dayofYear.323 <- 0
-d$dayofYear.324 <- 0
-d$dayofYear.325 <- 0
-d$dayofYear.326 <- 0
-d$dayofYear.327 <- 0
-d$dayofYear.328 <- 0
-d$dayofYear.329 <- 0
-d$dayofYear.330 <- 0
-d$dayofYear.331 <- 0
-d$dayofYear.332 <- 0
-d$dayofYear.333 <- 0
-d$dayofYear.334 <- 0
-d$dayofYear.335 <- 0
-d$dayofYear.336 <- 0
-d$dayofYear.337 <- 0
-d$dayofYear.338 <- 0
-d$dayofYear.339 <- 0
-d$dayofYear.340 <- 0
-d$dayofYear.341 <- 0
-d$dayofYear.342 <- 0
-d$dayofYear.343 <- 0
-d$dayofYear.344 <- 0
-d$dayofYear.345 <- 0
-d$dayofYear.346 <- 0
-d$dayofYear.347 <- 0
-d$dayofYear.348 <- 0
-d$dayofYear.349 <- 0
-d$dayofYear.350 <- 0
-d$dayofYear.351 <- 0
-d$dayofYear.352 <- 0
-d$dayofYear.353 <- 0
-d$dayofYear.354 <- 0
-d$dayofYear.355 <- 0
-d$dayofYear.356 <- 0
-d$dayofYear.357 <- 0
-d$dayofYear.358 <- 0
-d$dayofYear.359 <- 0
-d$dayofYear.360 <- 0
-d$dayofYear.361 <- 0
-d$dayofYear.362 <- 0
-d$dayofYear.363 <- 0
-d$dayofYear.364 <- 0
-d$dayofYear.365 <- 0
 
-d$weekday.Fri <- ifelse(d$dayofWeek.5==1,1,0)
-d$weekday.Mon <- ifelse(d$dayofWeek.1==1,1,0)
-d$weekday.Tue <- ifelse(d$dayofWeek.2==1,1,0)
-d$weekday.Wed <- ifelse(d$dayofWeek.3==1,1,0)
-d$weekday.Thu <- ifelse(d$dayofWeek.4==1,1,0)
-d$weekday.Sat <- ifelse(d$dayofWeek.6==1,1,0)
-d$weekday.Sun <- ifelse(d$dayofWeek.0==1,1,0)
+
+d$Promo.2Valid_L20 <- ifelse(d$promovalid_L2.0==1,1,0)
+
+
+d$SchoolHoliday._L5c <- ifelse(d$SchoolHoliday._L51==1,1,0)
+
+d$StateHoliday._L5c <- ifelse(d$StateHoliday_L5.2==1,1,0)
+
+d$StateHoliday._L4c <- ifelse(d$StateHoliday_L4.1==1,1,0)
+
+d$StateHoliday._L3c <- ifelse(d$StateHoliday_L3.1==1,1,0)
+d$StateHoliday._L2c <- ifelse(d$StateHoliday_L2.1==1,1,0)
+d$StateHoliday._L1c <- ifelse(d$StateHoliday_L1.1==1,1,0)
+
+d$promovalid._L22 <- ifelse(d$promovalid_L2.2==1,1,0)
+
+d$promovalid._L21 <- ifelse(d$promovalid_L2.1==1,1,0)
+d$promovalid._L20 <- ifelse(d$promovalid_L2.0==1,1,0)
+
+
+d$promovalid._L12 <- ifelse(d$promovalid_L2.1==1,1,0)
+
+d$promovalid._L10 <- ifelse(d$promovalid_L1.1==1,0,1)
+d$promovalid._L11 <- ifelse(d$promovalid_L1.1==1,1,0)
+
+d$Open_L1.0 <- ifelse(d$Open_L1.1==1,0,1)
+d$Open_L1.1 <- ifelse(d$Open_L1.1==1,1,0)
+
+
+d$promovalid.0 <- ifelse(d$promovalid==1,0,1)
+d$promovalid.1 <- ifelse(d$promovalid==1,1,0)
+
+d$events.1 <- ifelse(d$events.==1,1,0)
+d$events.2 <- ifelse(d$events.Fog==1,0,1)
+d$events.3 <- ifelse(d$events.Rain==1,1,0)
+d$events.4 <- ifelse(d$events.Fog.Rain==1,1,0)
+d$events.5 <- ifelse(d$events.Thunderstorm==1,1,0)
+d$events.6 <- ifelse(d$events.Rain.Thunderstorm==1,1,0)
+d$events.7 <- ifelse(d$events.Fog.Rain.Thunderstorm==1,1,0)
+d$events.8 <- ifelse(d$events.Fog.Rain.Thunderstorm==1,0,1)
+d$events.9 <- ifelse(d$events.==1,0,1)
+d$events.10 <- ifelse(d$events.1==1,0,1)
+d$events.11 <- ifelse(d$events.2==1,0,1)
+d$events.12 <-ifelse(d$events.2==1,0,1)
+d$events.13 <- ifelse(d$events.3==1,0,1)
+d$events.14 <- ifelse(d$events.4==1,0,1)
+d$events.15 <- ifelse(d$events.5==1,0,1)
+d$events.16 <- ifelse(d$events.6==1,0,1)
+d$events.17 <- ifelse(d$events.7==1,0,1) 
+d$events.18 <- ifelse(d$events.8==1,0,1)
+d$events.19 <- ifelse(d$events.9==1,0,1)
+d$events.20 <- ifelse(d$events.10==1,0,1)
+d$events.21 <- ifelse(d$events.11==1,0,1)
+d$events.22 <- ifelse(d$events.12==1,0,1)
+d$events.22 <- ifelse(d$events.12==1,0,1)
+
 
 
 d$weekNum.1 <- 0
@@ -454,27 +133,52 @@ d$month.12 <- 0
 d$quarter.1 <- 0
 d$quarter.4 <- 0
 
+
+
+
+
+
+
+
+
+
 d$year.2013 <- 0
 d$year.2014 <- 0
 d$year.2015 <- 1
 
 
 
+
+
+d <- FinalTestData
+rm(FinalTestData)
+
+d$StateHoliday.0 <- 1
+d$StateHoliday.1 <- 0
+
+
+
+d$weekday.Fri <- ifelse(d$dayofWeek.5==1,1,0)
+d$weekday.Mon <- ifelse(d$dayofWeek.1==1,1,0)
+d$weekday.Tue <- ifelse(d$dayofWeek.2==1,1,0)
+d$weekday.Wed <- ifelse(d$dayofWeek.3==1,1,0)
+d$weekday.Thu <- ifelse(d$dayofWeek.4==1,1,0)
+d$weekday.Sat <- ifelse(d$dayofWeek.6==1,1,0)
+d$weekday.Sun <- ifelse(d$dayofWeek.0==1,1,0)
+
+
+
+
+
+
+
+
 d$Promo.2Valid2 <- 0
 
 
-d$events.1 <- ifelse(d$events. ==1,1,0)
-d$events.2 <- ifelse(d$events.Fog==1,1,0)
-d$events.3 <- ifelse(d$events.Fog.Rain==1,1,0)
-d$events.4 <- ifelse(d$events.Fog.Rain.Thunderstorm==1,1,0)
-d$events.5 <- ifelse(d$events.Rain==1,1,0)
-d$events.6 <- ifelse(d$events.Rain.Thunderstorm==1,1,0)
-d$events.7 <- ifelse(d$events.Thunderstorm==1,1,0)
-d$events.8 <- ifelse(d$events.Thunderstorm==1,0,1)
 
 
-d$promovalid.1 <- ifelse(d$promovalid==1,1,0)
-d$promovalid.0 <- ifelse(d$promovalid==1,0,1)
+
 d$p
 
 
@@ -525,10 +229,14 @@ d$SchoolHoliday._L4c <- 0
 d$SchoolHoliday._L5b <- 0
 d$SchoolHoliday._L5c <- 0
 
+Id <- d$Id
+Store <- d$Store 
+Open <- d$Open
+Sales <- ifelse(d$Open==1,exp(final.preds),0)
 
+preds <- cbind(Open,Sales)
+preds <- cbind(Store,preds)
+preds <- cbind(Id,preds)
 
-
-Sales <- predict(gbmFit,newdata = d)
-
-write.csv(Sales,file="GBMPreds_3_11.csv")
+write.csv(preds,file="Prediction Files/Week 2 New Preds.csv")
 
