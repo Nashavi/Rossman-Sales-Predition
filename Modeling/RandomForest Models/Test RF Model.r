@@ -1,8 +1,9 @@
 
 # Load Default Setup 
 source("Modeling/Modeling Setup.R")
+
 unique(training$State)
-st <- "HE"
+st <- "NWRP"
 
 
 ##### training subsettting and prep ##### 
@@ -42,7 +43,7 @@ e$Sales <- log(e$Sales) #now change sales to log sales
 
 p = dim(d)[2]-1 #how many variables are available?
 p <- round(p/3) #mytry should be ~ p/3
-mtry.vec <- c(p+20,p+30,p+40,p+50) ### try p/3 bracketed up and down -30 tp + 30
+mtry.vec <- c(110,120,130) ### try p/3 bracketed up and down -30 tp + 30
 
 fitControl = trainControl(method = 'cv'
                           , number=3
