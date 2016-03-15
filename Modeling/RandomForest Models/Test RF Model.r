@@ -2,7 +2,7 @@
 # Load Default Setup 
 source("Modeling/Modeling Setup.R")
 unique(training$State)
-st <- "SN"
+st <- "HE"
 
 
 ##### training subsettting and prep ##### 
@@ -42,10 +42,11 @@ e$Sales <- log(e$Sales) #now change sales to log sales
 
 p = dim(d)[2]-1 #how many variables are available?
 p <- round(p/3) #mytry should be ~ p/3
-mtry.vec <- c(p-30,p-20,p-10,p,p+10,p+20,p+30) ### try p/3 bracketed up and down -30 tp + 30
+mtry.vec <- c(p+20,p+30,p+40,p+50) ### try p/3 bracketed up and down -30 tp + 30
 
 fitControl = trainControl(method = 'cv'
-                          , number=5
+                          , number=3
+                          ,verboseIter = T
                           ,summaryFunction=defaultSummary)
 Grid =  expand.grid(mtry=mtry.vec)
 rfFit = train(Sales ~ .
@@ -56,7 +57,7 @@ rfFit = train(Sales ~ .
               ,tuneGrid=Grid
               ,verbose=TRUE)
 
-save(rfFit,file="Modeling/RandomForest Models/SN_RFModel.RData",compress = TRUE)
+save(rfFit,file="Modeling/RandomForest Models/HE_RFModel.RData",compress = TRUE)
 
 plot(rfFit)
 summary(rfFit)[1:10,]
