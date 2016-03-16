@@ -3,7 +3,7 @@
 source("Modeling/Modeling Setup.R")
 
 unique(training$State)
-st <- "NWRP"
+st <- "BEHBHHNISH"
 
 rm(testing) #remove to optimize memory 
 rm(eval) #remove to optimize memory 
@@ -38,7 +38,16 @@ rfFit = train(Sales ~ .
               ,tuneGrid=Grid
               ,verbose=TRUE)
 
-save(rfFit,file="Modeling/RandomForest Models/NWRP_RFModel.RData",compress = TRUE)
+
+Vars <- d[,-1]
+Sales <- d$Sales
+rm(d)
+
+rfFit <- randomForest(Vars,Sales,mtry=140,ntree=100,do.trace = TRUE)
+
+
+
+save(rfFit,file="Modeling/RandomForest Models/BEHBHHNISH_RFModel.RData",compress = TRUE)
 
 plot(rfFit)
 summary(rfFit)[1:10,]

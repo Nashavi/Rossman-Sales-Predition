@@ -1,9 +1,9 @@
 
-load("Modeling/RandomForest Models/ST_RFModel.RData") #Load the model for a state
+load("Modeling/RandomForest Models/BEHBHHNISH_RFModel.RData") #Load the model for a state
 load("Datasets/FinalTest.RData") #load the test dataset 
 load("Modeling/finalPreds.RData") #load the consolidated prediction file  
 
-st <- "ST"  # assign the state your are applying predictions for 
+st <- "BEHBHHNISH"  # assign the state your are applying predictions for 
 
 finalPreds[finalPreds$State==st,"Sales"] #check to see if there are sales values predicted already - should be 0's....
 
