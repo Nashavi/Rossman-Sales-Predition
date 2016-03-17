@@ -23,7 +23,7 @@ d$Sales <- log(d$Sales) #now change sales to log sales
 
 p = dim(d)[2]-1 #how many variables are available?
 p <- round(p/3) #mytry should be ~ p/3
-mtry.vec <- c(110,120,130) ### try p/3 bracketed up and down -30 tp + 30
+mtry.vec <- c(140) ### try p/3 bracketed up and down -30 tp + 30
 
 fitControl = trainControl(method = 'cv'
                           , number=3
