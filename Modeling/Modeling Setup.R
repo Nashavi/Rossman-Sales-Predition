@@ -3,6 +3,7 @@ library(caret)
 library(randomForest)
 library(gbm)
 library(ggplot2)
+library(xgboost)
 
 #set the random seed
 set.seed(686)
