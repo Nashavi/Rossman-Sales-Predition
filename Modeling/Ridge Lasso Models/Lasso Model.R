@@ -42,7 +42,7 @@ for(i in 1:length(enetGrid$lambda)) {
   print(paste(i,"th model tuned, now applying preds..."))
   
   enetPreds <- predict(enetModel
-                      ,newX = testing
+                      ,testing
                       ,s = .1
                       ,mode = "fraction"
                       ,type = "fit")
@@ -52,14 +52,14 @@ for(i in 1:length(enetGrid$lambda)) {
   print(sqrt(mean((enetPreds$fit - testing.Sales)^2)))
   
   enetPreds <- predict(enetModel
-                       ,newX = eval
+                       ,eval
                        ,s = .1
                        ,mode = "fraction"
                        ,type = "fit")
   
-  enetGrid[i,"RMSE2"] <- sqrt(mean((gbmPreds$fit - eval.Sales)^2))
+  enetGrid[i,"RMSE2"] <- sqrt(mean((enetPreds$fit - eval.Sales)^2))
   
-  print(sqrt(mean((gbmPreds$fit - eval.Sales)^2)))
+  print(sqrt(mean((enetPreds$fit - eval.Sales)^2)))
   
   print(paste(i,"th model finished."))
   
@@ -73,4 +73,20 @@ enetGrid[enetGridmin,]
 ggplot(enetGrid,aes(lambda,RMSE2))+geom_line()#lwd=1,aes(color=factor(depth)))+facet_wrap(~depth)+ggtitle("Boosting Results")
 enetGridmin <- which.min(enetGrid$RMSE2)
 enetGrid[enetGridmin,]
+
+
+# 
+# enetModel <- enet(training,
+#      training.Sales,
+#      .1,
+#      normalize=TRUE)
+# 
+# enetPreds <- predict(enetModel
+#                      ,testing
+#                      ,s = .1
+#                      ,mode = "fraction"
+#                      ,type = "fit")
+# 
+# sqrt(mean((enetPreds$fit - testing.Sales)^2))
+
 
