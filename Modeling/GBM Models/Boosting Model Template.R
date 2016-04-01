@@ -2,7 +2,9 @@
 # Load Default Setup 
 source("Modeling/Modeling Setup.R")
 
-st <- "BY"
+unique(training$State)
+
+st <- "SN"
 training <- training[training$Open==1 & training$Sales!=0 & training$State==st, ]
 training$Sales <- log(training$Sales)
 training <- training[,-c(1,3:5)]
@@ -11,12 +13,17 @@ testing <- testing[testing$Open==1 & testing$Sales!=0 & testing$State==st, ]
 testing$Sales <- log(testing$Sales)
 testing <- testing[,-c(1,3:5)]
 
+eval <- eval[eval$Open==1 & eval$Sales!=0 & eval$State==st, ]
+eval$Sales <- log(eval$Sales)
+eval <- eval[,-c(1,3:5)]
+
 ######### Modeling ########
 
-tune.grid <- expand.grid(ntrees = seq(3000,4000,by=250),
-                         depth = c(5,6),
+tune.grid <- expand.grid(ntrees = seq(2000,5000,by=1000),
+                         depth = c(2,3,4,5,6),
                          shrink = c(0.1),
-                         RMSE = rep(-1) )
+                         RMSE1 = rep(-1),
+                         RMSE2 = rep(-1))
 
 for(i in 1:length(tune.grid$ntrees)) {
  
@@ -42,21 +49,37 @@ for(i in 1:length(tune.grid$ntrees)) {
                     ,shrinkage = shink
                     ,type="response")
     
-  tune.grid[i,"RMSE"] <- sqrt(mean((gbmPreds - testing$Sales)^2))
+  tune.grid[i,"RMSE1"] <- sqrt(mean((gbmPreds - testing$Sales)^2))
   
   print(sqrt(mean((gbmPreds - testing$Sales)^2)))
+  
+  gbmPreds <- predict(gbmMod
+                      ,eval
+                      ,n.trees = ntrees
+                      ,interaction.depth = depth
+                      ,shrinkage = shink
+                      ,type="response")
+  
+  tune.grid[i,"RMSE2"] <- sqrt(mean((gbmPreds - eval$Sales)^2))
+  
+  print(sqrt(mean((gbmPreds - eval$Sales)^2)))
+  
   print(paste(i,"th model finished."))
   
 }
 tune.grid <- data.frame(tune.grid)
 attach(tune.grid)
-ggplot(tune.grid,aes(ntrees,RMSE))+geom_line(lwd=1,aes(color=factor(depth)))+facet_wrap(~depth)+ggtitle("Boosting Results")
-tune.gridmin <- which.min(tune.grid$RMSE)
-tune.grid[min,]
+ggplot(tune.grid,aes(ntrees,RMSE1))+geom_line(lwd=1,aes(color=factor(depth)))+facet_wrap(~depth)+ggtitle("Boosting Results")
+tune.gridmin <- which.min(tune.grid$RMSE1)
+tune.grid[tune.gridmin,]
+
+ggplot(tune.grid,aes(ntrees,RMSE2))+geom_line(lwd=1,aes(color=factor(depth)))+facet_wrap(~depth)+ggtitle("Boosting Results")
+tune.gridmin <- which.min(tune.grid$RMSE2)
+tune.grid[tune.gridmin,]
 
 ##### Results 
-#1) 2000 trees, 3 deep, .1 shrink = 16.55% RMSE
-#2) 3000 trees, 5 deep, .1 shink = 14.73% RMSE   (at 3000 trees 4 deep, RMSE seems to be coming back up...)
+#1) 2000 trees, 6 deep = 12.4% - 12.3%
+#2) 
 #3)
 ########
 
