@@ -29,10 +29,10 @@ enetGrid <- expand.grid(lambda = seq(0,.1,by=.01),
                         RMSE2 = rep(-1))
 
 for(i in 1:length(enetGrid$lambda)) {
-  
+ 
   .lambda <- enetGrid[i,1]
  
-  print(paste(i,"model:","lambda=",.lambda))
+  print(paste(i,"model:","lambda=",.lambda,"Start Time:",Sys.time()))
   
   enetModel <- enet(training,
                     training.Sales,
@@ -61,7 +61,7 @@ for(i in 1:length(enetGrid$lambda)) {
   
   print(sqrt(mean((gbmPreds$fit - eval.Sales)^2)))
   
-  print(paste(i,"th model finished."))
+  print(paste(i,"th model finished."),"End time",Sys.time())
   
 }
 enetGrid <- data.frame(enetGrid)
