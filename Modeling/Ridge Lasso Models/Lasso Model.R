@@ -2,42 +2,84 @@
 # Load Default Setup 
 source("Modeling/Modeling Setup.R")
 require(elasticnet)
+library(glmnet)
 
 st <- "BW"
 
 training <- training[training$Open==1 & training$Sales!=0 & training$State==st, ]
-training.Sales <- log(training$Sales)
-training <- training[,-c(1:5)]
+training <- training[,-c(1,3:5)]
 x = data.frame(nearZeroVar(training, saveMetrics = TRUE))
 zerovarcols <- which(x$zeroVar==TRUE)
 training <- training[,-zerovarcols]
-training <- as.matrix(training)
+training.Sales <- log(training$Sales)
+training <- model.matrix(Sales~.,training)[,-1]
+
 
 testing <- testing[testing$Open==1 & testing$Sales!=0 & testing$State==st, ]
+testing <- testing[,-c(1,3:5)]
+testing <- testing[,-zerovarcols]
 testing.Sales <- log(testing$Sales)
-testing <- testing[,-c(1:5)]
-testing <- as.matrix(testing)
+testing <- model.matrix(Sales~.,testing)[,-1]
 
 eval <- eval[eval$Open==1 & eval$Sales!=0 & eval$State==st, ]
+eval <- eval[,-c(1,3:5)]
+eval <- eval[,-zerovarcols]
 eval.Sales <- log(eval$Sales)
-eval <- eval[,-c(1:5)]
-eval <- as.matrix(eval)
+eval <- model.matrix(Sales~.,eval)[,-1]
 
 
-enetGrid <- expand.grid(lambda = seq(0,.1,by=.01),
+grid <- 10^seq(10,-2,length=1000)
+lasso.mod <- glmnet(training,training.Sales,alpha=0)#,lambda=grid) #alpha = 1 === Lasso Model 
+n <- dim(coef(lasso.mod))[2] # how many lambda values are there?
+
+for(i in 1:n){
+  lam <- lasso.mod$lambda[i]
+  lasso.preds <- predict(lasso.mod
+                        ,s = lam 
+                        ,newx = testing)
+  
+  rmse <- sqrt(mean((lasso.preds - testing.Sales)^2))
+  print(rmse)
+}
+
+
+enetModel <- enet(x = training,
+                  y = training.Sales,
+                  lambda = .01,
+                  normalize = TRUE)
+
+enetPreds <- predict(enetModel
+                     ,testing
+                     ,s = .01
+                     ,mode = "fraction"
+                     ,type = "fit")
+
+#enetGrid[i,"RMSE1"] <- sqrt(mean((enetPreds$fit - testing.Sales)^2))
+
+print(sqrt(mean((enetPreds$fit - testing.Sales)^2)))
+
+
+enetGrid <- expand.grid(lambda = seq(1,10,by=1),
                         RMSE1 = rep(-1),
                         RMSE2 = rep(-1))
 
 for(i in 1:length(enetGrid$lambda)) {
+<<<<<<< HEAD
   
+  .l <- enetGrid[i,1]
+ 
+  print(paste(i,"model:","lambda=",.l))
+=======
+ 
   .lambda <- enetGrid[i,1]
  
-  print(paste(i,"model:","lambda=",.lambda))
+  print(paste(i,"model:","lambda=",.lambda,"Start Time:",Sys.time()))
+>>>>>>> c4224a82b8b0a0bf709f53a04e74d9f04344f927
   
-  enetModel <- enet(training,
-                    training.Sales,
-                    .lambda,
-                    normalize=TRUE)
+  enetModel <- enet(x = training,
+                    y = training.Sales,
+                    lambda = .l,
+                    normalize = TRUE)
   
   print(paste(i,"th model tuned, now applying preds..."))
   
@@ -61,7 +103,7 @@ for(i in 1:length(enetGrid$lambda)) {
   
   print(sqrt(mean((enetPreds$fit - eval.Sales)^2)))
   
-  print(paste(i,"th model finished."))
+  print(paste(i,"th model finished."),"End time",Sys.time())
   
 }
 enetGrid <- data.frame(enetGrid)
