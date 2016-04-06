@@ -19,7 +19,7 @@ eval <- eval[,-c(1,3:5)]
 
 ######### Modeling ########
 
-tune.grid <- expand.grid(ntrees = seq(2000,5000,by=1000),
+tune.grid <- expand.grid(ntrees = seq(1000,5000,by=1000),
                          depth = c(2,3,4,5,6),
                          shrink = c(0.1),
                          RMSE1 = rep(-1),
@@ -31,7 +31,7 @@ for(i in 1:length(tune.grid$ntrees)) {
   depth <- tune.grid[i,"depth"]
   shrink <- tune.grid[i,"shrink"]
 
-  print(paste("ntrees:",ntrees,"depth:",depth,"shrink:",shrink))
+  print(paste("model",i,":",ntrees, "trees,",depth,"deep,",shrink,"learning rate."))
   
   gbmMod <- gbm(Sales ~ .
               , data = training
@@ -40,7 +40,7 @@ for(i in 1:length(tune.grid$ntrees)) {
               ,shrinkage=shrink
               ,distribution = "gaussian")
 
-  print(paste(i,"th model tuned, now applying preds..."))
+  print(paste("model",i,"tuned, now applying preds..."))
 
   gbmPreds <- predict(gbmMod
                     ,testing
@@ -64,7 +64,7 @@ for(i in 1:length(tune.grid$ntrees)) {
   
   print(sqrt(mean((gbmPreds - eval$Sales)^2)))
   
-  print(paste(i,"th model finished."))
+  print(paste("model",i,"finished."))
   
 }
 tune.grid <- data.frame(tune.grid)
@@ -79,7 +79,7 @@ tune.grid[tune.gridmin,]
 
 ##### Results 
 #1) 2000 trees, 6 deep = 12.4% - 12.3%
-#2) 
+#2) 2500 trees, 6 deep = 12.2-12.15%
 #3)
 ########
 

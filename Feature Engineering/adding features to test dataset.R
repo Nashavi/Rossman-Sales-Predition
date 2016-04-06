@@ -61,6 +61,8 @@ for(a in 1:length(airports)){
       cloudcover <- dat$CloudCover[j] 
       events <- dat$Events[j]
       
+      #print(paste(ac,dt,max_t,avg_t,min_t,max_wind,precip,cloudcover,events))
+      
       #now assign those weather features to stores:
       #match on storeid, airportcode, and date
       t[t$Store %in% stores & t$AirportCode==ac & t$Date==dt,"max_t"] <- max_t
