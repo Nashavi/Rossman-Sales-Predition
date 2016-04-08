@@ -1,21 +1,22 @@
 require(caret)
-load("Datasets/TrainData.RData")
-#load("Datasets/Train.RData")
+require(lubridate)
+load("Datasets/TreeTestData.RData")
 
-d <- TrainData
-rm(TrainData)
+d <- TreeTestData
+rm(TreeTestData)
 str(d)
 ###d[d$Store==81,"CompetitionDistance"] <- 5382
-
+#d <- d[,-5]
 ###d[sapply(d, is.character)] <- lapply(d[sapply(d, is.character)],as.factor)
-# d$Store <- as.factor(d$Store)
-# d$Date <- as.Date(d$Date)
-# d$Open <- as.factor(d$Open)
-# d$Promo <- as.factor(d$Promo)
-# d$StateHoliday <- as.character(d$StateHoliday)
-# d$StateHoliday <- as.factor(ifelse(d$StateHoliday=="0","0","1"))
-# d$SchoolHoliday <- as.character(d$SchoolHoliday)
-# d$SchoolHoliday <- as.factor(ifelse(d$SchoolHoliday=="0","0","1"))
+d$Store <- as.factor(d$Store)
+d$Date <- as.Date(d$Date,'%m/%d/%Y')
+d$Open <- as.factor(d$Open)
+d$Promo <- as.factor(d$Promo)
+d$StateHoliday <- as.character(d$StateHoliday)
+d$StateHoliday <- as.factor(ifelse(d$StateHoliday=="0","0","1"))
+d$SchoolHoliday <- as.character(d$SchoolHoliday)
+d$SchoolHoliday <- as.factor(ifelse(d$SchoolHoliday=="0","0","1"))
+d$dayofYear <- as.numeric(strftime(d$Date, format = "%j"))
 d$dayofYear <- as.integer(d$dayofYear)
 d$dayofWeek <- as.integer(d$dayofWeek)
 d$dayofMonth <- as.integer(d$dayofMonth)
@@ -23,13 +24,16 @@ d$weekNum <- as.integer(d$weekNum)
 d$month <- as.integer(d$month)
 d$quarter <- as.integer(d$quarter)
 d$year <- as.integer(d$year)
+d$cloudcover <- as.integer(d$cloudcover)
+d$events <- as.factor(d$events)
+levels(d$events)
+d$events <- unclass(d$events)
 d$events <- as.integer(d$events)
-
-# d$CompetitionOpenSinceMonth <- as.factor(d$CompetitionOpenSinceMonth)
-# d$CompetitionOpenSinceYear <- as.factor(d$CompetitionOpenSinceYear)
-# d$Promo2 <- as.factor(d$Promo2)
-# d$Promo2Valid <- as.factor(d$Promo2Valid)
-# d$promovalid <- as.factor(d$promovalid)
+d$CompetitionOpenSinceMonth <- as.factor(d$CompetitionOpenSinceMonth)
+d$CompetitionOpenSinceYear <- as.factor(d$CompetitionOpenSinceYear)
+d$Promo2 <- as.factor(d$Promo2)
+d$Promo2Valid <- as.factor(d$Promo2Valid)
+d$promovalid <- as.factor(d$promovalid)
 d$Open_L1 <- as.factor(d$Open_L1)
 d$promovalid_L1 <- as.factor(d$promovalid_L1)
 d$promovalid_L2 <- as.factor(d$promovalid_L2)
@@ -37,13 +41,11 @@ d$Promo2Valid_L1 <- as.factor(d$Promo2Valid_L1)
 d$Promo2Valid_L2 <- as.factor(d$Promo2Valid_L2)
 
 d<- d[,-which(names(d) %in% c("CompetitionOpenSinceMonth","CompetitionOpenSinceYear"))]
-d<- d[,-which(names(d) %in% c("Promo2","Promo2SinceWeek","Promo2SinceYear","PromoInterval"))]
-d<- d[,-which(names(d) %in% c("CompetitionOpenDate","Date","Promo2StartDate","SalesMonthInterval"))]
-d<- d[,-which(names(d) %in% c("Weekday"))]
+d<- d[,-which(names(d) %in% c("AirportCode","CompetitionOpenDate","SalesMonthInterval"))]
+#d<- d[,-which(names(d) %in% c("CompetitionOpenDate","Date","Promo2StartDate","SalesMonthInterval"))]
+#d<- d[,-which(names(d) %in% c("Weekday"))]
 d$WeeksSinceCompOpened <- as.integer(d$WeeksSinceCompOpened)
 
-
-d[d$Id==907,]
 
 m = matrix(data=NA,nrow=length(names(d)),ncol=2)
 dimnames(m) = list(names(d),c("Total Missing","Percent Missing"))        
@@ -55,103 +57,26 @@ for(i in 1:nrow(m)){
 }
 m <- data.frame(m[m[,"Percent Missing"]!=0,])
 
-random.imp <- function(a){
-  missing <- is.na(a)
-  n.missing <- sum(missing)
-  a.obs <- a[!missing]
-  imputed <- a
-  imputed[missing] <- sample (a.obs,n.missing,replace=TRUE)
-  return (imputed)
+load("Datasets/Train.RData")
+t <- TrainData
+t <- t[,-c(4,6:43)]
+t$Date <- as.Date(t$Date,'%m/%d/%Y')
+t <- t[t$Date>"2015-05-08",]
+t$NewDate <- t$Date+ 42
+
+d$SixWeekSalesLag <- -1
+for(i in d$Id){
+  s <- d[d$Id==i,"Store"]
+  dt <- d[d$Id==i,"Date"]
+  #print(paste(s,dt))
+  l.sales <- t[t$Store==s & t$NewDate==dt,"Sales"]
+  d[d$Id==i,"SixWeekSalesLag"] <- l.sales
 }
 
-d$CompetitionDistance <- ifelse(is.na(d$CompetitionDistance)==TRUE,
-                                random.imp(d$CompetitionDistance),
-                                d$CompetitionDistance)
-d$WeeksSinceCompOpened <- ifelse(is.na(d$WeeksSinceCompOpened)==TRUE,
-                                 random.imp(d$WeeksSinceCompOpened),
-                                 d$WeeksSinceCompOpened)
-
-d$Promo2Valid <- as.character(d$Promo2Valid)
-d$Promo2Valid <- ifelse(is.na(d$Promo2Valid)==TRUE,"2",d$Promo2Valid)
-d$Promo2Valid <- factor(d$Promo2Valid,levels=c("0","1","2"))
-
-d$cloudcover <- as.factor(ifelse(is.na(d$cloudcover)==TRUE,
-                                 random.imp(d$cloudcover),
-                                 d$cloudcover))
-d$events <- as.factor(ifelse(is.na(d$events)==TRUE,
-                             random.imp(d$events),
-                             d$events))
-
-d$Open_L1 <- as.character(d$Open_L1)
-d$Open_L1 <-ifelse(is.na(d$Open_L1)==TRUE,"3",d$Open_L1)
-d$Open_L1 <- factor(d$Open_L1,levels=c("1","2","3"))
-
-d$promovalid_L1 <- as.character(d$promovalid_L1)
-d$promovalid_L1 <- ifelse(is.na(d$promovalid_L1)==TRUE,"3",d$promovalid_L1)
-d$promovalid_L1 <- factor(d$promovalid_L1,levels=c("1","2","3")) 
-
-d$promovalid_L2 <- as.character(d$promovalid_L2)
-d$promovalid_L2 <- ifelse(is.na(d$promovalid_L2)==TRUE,"3",d$promovalid_L2)
-d$promovalid_L2 <- factor(d$promovalid_L2,levels=c("1","2","3")) 
-
-d$StateHoliday_L1 <- as.character(d$StateHoliday_L1)
-d$StateHoliday_L1 <- ifelse(is.na(d$StateHoliday_L1)==TRUE,"3",d$StateHoliday_L1)
-d$StateHoliday_L1 <- factor(d$StateHoliday_L1,levels=c("1","2","3")) 
-
-d$StateHoliday_L2 <- as.character(d$StateHoliday_L2)
-d$StateHoliday_L2 <- ifelse(is.na(d$StateHoliday_L2)==TRUE,"3",d$StateHoliday_L2)
-d$StateHoliday_L2 <- factor(d$StateHoliday_L2,levels=c("1","2","3"))
-
-d$StateHoliday_L3 <- as.character(d$StateHoliday_L3)
-d$StateHoliday_L3 <- ifelse(is.na(d$StateHoliday_L3)==TRUE,"3",d$StateHoliday_L3)
-d$StateHoliday_L3 <- factor(d$StateHoliday_L3,levels=c("1","2","3"))
-
-d$StateHoliday_L4 <- as.character(d$StateHoliday_L4)
-d$StateHoliday_L4 <- ifelse(is.na(d$StateHoliday_L4)==TRUE,"3",d$StateHoliday_L4)
-d$StateHoliday_L4 <- factor(d$StateHoliday_L4,levels=c("1","2","3"))
-
-d$StateHoliday_L5 <- as.character(d$StateHoliday_L5)
-d$StateHoliday_L5 <- ifelse(is.na(d$StateHoliday_L5)==TRUE,"3",d$StateHoliday_L4)
-d$StateHoliday_L5 <- factor(d$StateHoliday_L5,levels=c("1","2","3"))
 
 
-d$SchoolHoliday_L1 <- as.character(d$SchoolHoliday_L1)
-d$SchoolHoliday_L1 <- ifelse(is.na(d$SchoolHoliday_L1)==TRUE,"3",d$SchoolHoliday_L1)
-d$SchoolHoliday_L1 <- factor(d$SchoolHoliday_L1,levels=c("1","2","3")) 
-
-d$SchoolHoliday_L2 <- as.character(d$SchoolHoliday_L2)
-d$SchoolHoliday_L2 <- ifelse(is.na(d$SchoolHoliday_L2)==TRUE,"3",d$SchoolHoliday_L2)
-d$SchoolHoliday_L2 <- factor(d$SchoolHoliday_L2,levels=c("1","2","3"))
-
-d$SchoolHoliday_L3 <- as.character(d$SchoolHoliday_L3)
-d$SchoolHoliday_L3 <- ifelse(is.na(d$SchoolHoliday_L3)==TRUE,"3",d$SchoolHoliday_L3)
-d$SchoolHoliday_L3 <- factor(d$SchoolHoliday_L3,levels=c("1","2","3"))
-
-d$SchoolHoliday_L4 <- as.character(d$SchoolHoliday_L4)
-d$SchoolHoliday_L4 <- ifelse(is.na(d$SchoolHoliday_L4)==TRUE,"3",d$SchoolHoliday_L4)
-d$SchoolHoliday_L4 <- factor(d$SchoolHoliday_L4,levels=c("1","2","3"))
-
-d$SchoolHoliday_L5 <- as.character(d$SchoolHoliday_L5)
-d$SchoolHoliday_L5 <- ifelse(is.na(d$SchoolHoliday_L5)==TRUE,"3",d$SchoolHoliday_L5)
-d$SchoolHoliday_L5 <- factor(d$SchoolHoliday_L5,levels=c("1","2","3"))
-
-d$Promo2Valid_L1 <- as.character(d$Promo2Valid_L1)
-d$Promo2Valid_L1 <- ifelse(is.na(d$Promo2Valid_L1)==TRUE,"3",d$Promo2Valid_L1)
-d$Promo2Valid_L1 <- factor(d$Promo2Valid_L1,levels=c("1","2","3"))
-
-d$Promo2Valid_L2 <- as.character(d$Promo2Valid_L2)
-d$Promo2Valid_L2 <- ifelse(is.na(d$Promo2Valid_L2)==TRUE,"3",d$Promo2Valid_L2)
-d$Promo2Valid_L2 <- factor(d$Promo2Valid_L2,levels=c("1","2","3"))
-
-
-rm(m)
-rm(i)
-rm(l)
-rm(u)
-
-
-TrainData <- d
-save(TrainData,file="Datasets/TrainData.RData",compress = TRUE )
+TreeTestData <- d
+save(TreeTestData,file="Datasets/TreeTestData.RData",compress = TRUE )
 
 
 # year <- as.character(d$year)

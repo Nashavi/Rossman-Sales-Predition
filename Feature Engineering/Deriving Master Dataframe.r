@@ -55,7 +55,7 @@ stores$Promo2StartDate <- as.Date(ifelse(is.na(stores$Promo2SinceYear)
 ### now lets add some additional features to the sales data 
 #read in the sales data
 
-sales = read.csv("Datasets/CSV Files/train.csv",na.strings = c("","NA"))
+sales = read.csv("Datasets/CSV Files/test.csv",na.strings = c("","NA"))
 attach(sales)
 sales$Store <- as.factor(sales$Store)
 #sales$Date  <- as.Date(sales$Date)
@@ -164,9 +164,9 @@ levels(d$year) <- c("2015","2014","2013")
 
 d$WeeksSinceCompOpened <- as.integer(d$WeeksSinceCompOpened)
 
-TrainData <- d
+TestData <- d
 rm(d)
-save(TrainData,file="Datasets/Train.RData",compress=TRUE)
+save(TestData,file="Datasets/Test.RData",compress=TRUE)
 
 TestData[TestData$Id==907,]
 
