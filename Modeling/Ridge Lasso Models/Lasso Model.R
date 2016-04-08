@@ -1,9 +1,9 @@
-
 # Load Default Setup 
 source("Modeling/Modeling Setup.R")
 require(elasticnet)
 
-st <- "BW"
+unique(training$State)
+st <- "NWRP"
 
 training <- training[training$Open==1 & training$Sales!=0 & training$State==st, ]
 training.Sales <- log(training$Sales)
@@ -61,7 +61,7 @@ for(i in 1:length(enetGrid$lambda)) {
   
   print(sqrt(mean((enetPreds$fit - eval.Sales)^2)))
   
-  print(paste(i,"th model finished."),"End time",Sys.time())
+  print(paste(i,"th model finished.","End time",Sys.time()))
   
 }
 enetGrid <- data.frame(enetGrid)
