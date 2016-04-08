@@ -1,11 +1,11 @@
 require(DataCombine)
 
-load("Datasets/Test.RData")
+#load("Datasets/Test.RData")
 
 
-#load("Datasets/TreeTrainData.RData")
-d<- TestData  
-rm(TestData)
+load("Datasets/TreeTrainData.RData")
+d<- TreeTrainData  
+rm(TreeTrainData)
 
 d<-d[order(d$Store,d$Date),] #order by store and then dtate
 d$Date <- as.Date(d$Date)
@@ -60,7 +60,16 @@ dlagged$SchoolHoliday_L5<-as.factor(dlagged$SchoolHoliday_L5)
 dlagged<- slide(dlagged, Var = "Promo2Valid", GroupVar = "Store", NewVar= "Promo2Valid_L1", slideBy = -1)
 dlagged<- slide(dlagged, Var = "Promo2Valid_L1", GroupVar = "Store", NewVar= "Promo2Valid_L2",slideBy = -1)
 
-#dlagged<- slide(dlagged, Var = "Sales", GroupVar = "Store", NewVar= "SixWeekSalesLag",slideBy = -42)
+lag = 6*7
+dlagged<- slide(dlagged, Var = "Sales", GroupVar = "Store", NewVar= "SixWeekSalesLag",slideBy = -lag)
+lag = 7*7
+dlagged<- slide(dlagged, Var = "Sales", GroupVar = "Store", NewVar= "SevenWeekSalesLag",slideBy = -lag)
+lag = 8*7
+dlagged<- slide(dlagged, Var = "Sales", GroupVar = "Store", NewVar= "EightWeekSalesLag",slideBy = -lag)
+lag = 9*7
+dlagged<- slide(dlagged, Var = "Sales", GroupVar = "Store", NewVar= "NineWeekSalesLag",slideBy = -lag)
+lag = 10*7
+dlagged<- slide(dlagged, Var = "Sales", GroupVar = "Store", NewVar= "TenWeekSalesLag",slideBy = -lag)
 
 
 d <- dlagged
@@ -132,62 +141,105 @@ d$Promo2Valid_L2 <- as.character(d$Promo2Valid_L2)
 d$Promo2Valid_L2 <- ifelse(is.na(d$Promo2Valid_L2)==TRUE,"3",d$Promo2Valid_L2)
 d$Promo2Valid_L2 <- factor(d$Promo2Valid_L2,levels=c("1","2","3"))
 
-# lag.stores <- unique(d[is.na(d$SixWeekSalesLag),"Store"])
-# 
-# for(i in 1:length(lag.stores)){
-#   avg.sales <- mean(d[d$Store==i & d$year==2013 & d$month==1,"Sales"])
-#   d[d$Store==i & is.na(d$SixWeekSalesLag)==TRUE,"SixWeekSalesLag"] <- avg.sales
-#   print(paste(i,avg.sales))
-# }
+lag.stores <- unique(d[is.na(d$SixWeekSalesLag),"Store"])
+unique(d[d$Store %in% lag.stores & is.na(d$SixWeekSalesLag),"year"])
+unique(d[d$Store %in% lag.stores & is.na(d$SixWeekSalesLag),"month"])
+
+for(i in 1:length(lag.stores)){
+  avg.sales <- mean(d[d$Store==i & d$year==2013 & d$month==1,"Sales"])
+  d[d$Store==i & is.na(d$SixWeekSalesLag)==TRUE,"SixWeekSalesLag"] <- avg.sales
+  print(paste(i,avg.sales))
+}
+
+lag.stores <- unique(d[is.na(d$SevenWeekSalesLag),"Store"])
+unique(d[d$Store %in% lag.stores & is.na(d$SevenWeekSalesLag),"year"])
+unique(d[d$Store %in% lag.stores & is.na(d$SevenWeekSalesLag),"month"])
+
+for(i in 1:length(lag.stores)){
+  avg.sales <- mean(d[d$Store==i & d$year==2013 & d$month==1,"Sales"])
+  d[d$Store==i & is.na(d$SevenWeekSalesLag)==TRUE,"SevenWeekSalesLag"] <- avg.sales
+  print(paste(i,avg.sales))
+}
+
+lag.stores <- unique(d[is.na(d$EightWeekSalesLag),"Store"])
+unique(d[d$Store %in% lag.stores & is.na(d$EightWeekSalesLag),"year"])
+unique(d[d$Store %in% lag.stores & is.na(d$EightWeekSalesLag),"month"])
+
+for(i in 1:length(lag.stores)){
+  avg.sales <- mean(d[d$Store==i & d$year==2013 & d$month==1,"Sales"])
+  d[d$Store==i & is.na(d$EightWeekSalesLag)==TRUE,"EightWeekSalesLag"] <- avg.sales
+  print(paste(i,avg.sales))
+}
+
+lag.stores <- unique(d[is.na(d$NineWeekSalesLag),"Store"])
+unique(d[d$Store %in% lag.stores & is.na(d$NineWeekSalesLag),"year"])
+unique(d[d$Store %in% lag.stores & is.na(d$NineWeekSalesLag),"month"])
+
+for(i in 1:length(lag.stores)){
+  avg.sales <- mean(d[d$Store==i & d$year==2013 & d$month %in% c(1,2,3),"Sales"])
+  d[d$Store==i & is.na(d$NineWeekSalesLag)==TRUE,"NineWeekSalesLag"] <- avg.sales
+  print(paste(i,avg.sales))
+}
+
+lag.stores <- unique(d[is.na(d$TenWeekSalesLag),"Store"])
+unique(d[d$Store %in% lag.stores & is.na(d$TenWeekSalesLag),"year"])
+unique(d[d$Store %in% lag.stores & is.na(d$TenWeekSalesLag),"month"])
+
+
+
 
 #d[d$Id==907,]
 #d <- d[order(d$Id),]
 
-#Competition Distance
-stores <- unique(d[is.na(d$CompetitionDistance),"Store"])
-for(i in stores) {
-  st <- unique(d[d$Store==i,"State"])
-  avgdist <- mean(d[d$State==st & is.na(d$CompetitionDistance)==FALSE,"CompetitionDistance"])
-  d[d$Store==i,"CompetitionDistance"] <- avgdist
-}
+# #Competition Distance
+# stores <- unique(d[is.na(d$CompetitionDistance),"Store"])
+# for(i in stores) {
+#   st <- unique(d[d$Store==i,"State"])
+#   avgdist <- mean(d[d$State==st & is.na(d$CompetitionDistance)==FALSE,"CompetitionDistance"])
+#   d[d$Store==i,"CompetitionDistance"] <- avgdist
+# }
+# 
+# d$CompetitionOpenSinceYear <- as.numeric(as.character(d$CompetitionOpenSinceYear))
+# d$CompetitionOpenSinceMonth <- as.numeric(as.character(d$CompetitionOpenSinceMonth))
+# unique(d[d$Store==551,"State"])
+# cosy <- as.data.frame(table(d[is.na(d$CompetitionOpenSinceYear)==FALSE & d$State=="BY","CompetitionOpenSinceYear"]))
+# d[d$Store==551,"CompetitionOpenSinceYear"] <- 2012
+# 
+# stores <- unique(d[is.na(d$WeeksSinceCompOpened),"Store"])
+# for(i in stores) {
+#   st <- unique(d[d$Store==i,"State"])
+#   avg.yr <- round(mean(d[d$State==st & is.na(d$WeeksSinceCompOpened)==FALSE,"CompetitionOpenSinceYear"]),0)
+#   avg.mo <- round(mean(d[d$State==st & is.na(d$WeeksSinceCompOpened)==FALSE,"CompetitionOpenSinceMonth"]),0)
+#   d[d$Store==i,"CompetitionOpenSinceYear"] <- avg.yr
+#   d[d$Store==i,"CompetitionOpenSinceMonth"] <- avg.mo
+# }
+# d$CompetitionOpenDate <- as.Date(paste(d$CompetitionOpenSinceYear,d$CompetitionOpenSinceMonth,"01",sep = "-"))
+# d$WeeksSinceCompOpened <- as.integer(difftime(d$Date,d$CompetitionOpenDate,units="weeks"))
+#                                       
+# missing.rows <- d[is.na(d$cloudcover),"Id"]
+# d[d$Id==30935,"State"]
+# 
+# for(i in missing.rows){
+#   st <- d[d$Id==i,"State"]
+#   dt <- d[d$Id==i,"Date"]
+#   tab <- as.data.frame(table(d[d$State!=st & d$Date==dt & is.na(d$cloudcover)==FALSE,"cloudcover"]))
+#   cc <- which.max(tab$Freq)[1]
+#   d[d$Id==i,"cloudcover"] <- cc
+#   n <- length(d[is.na(d$cloudcover),"Id"])
+#   print(paste(n,"records left"))
+# }
+# 
+# d$Promo2Valid <- ifelse(is.na(d$Promo2Valid)==TRUE,"2",d$Promo2Valid)
+# d$Promo2Valid <- factor(d$Promo2Valid,levels=c("0","1","2"))
+# 
+# str(d)
 
-d$CompetitionOpenSinceYear <- as.numeric(as.character(d$CompetitionOpenSinceYear))
-d$CompetitionOpenSinceMonth <- as.numeric(as.character(d$CompetitionOpenSinceMonth))
-unique(d[d$Store==551,"State"])
-cosy <- as.data.frame(table(d[is.na(d$CompetitionOpenSinceYear)==FALSE & d$State=="BY","CompetitionOpenSinceYear"]))
-d[d$Store==551,"CompetitionOpenSinceYear"] <- 2012
 
-stores <- unique(d[is.na(d$WeeksSinceCompOpened),"Store"])
-for(i in stores) {
-  st <- unique(d[d$Store==i,"State"])
-  avg.yr <- round(mean(d[d$State==st & is.na(d$WeeksSinceCompOpened)==FALSE,"CompetitionOpenSinceYear"]),0)
-  avg.mo <- round(mean(d[d$State==st & is.na(d$WeeksSinceCompOpened)==FALSE,"CompetitionOpenSinceMonth"]),0)
-  d[d$Store==i,"CompetitionOpenSinceYear"] <- avg.yr
-  d[d$Store==i,"CompetitionOpenSinceMonth"] <- avg.mo
-}
-d$CompetitionOpenDate <- as.Date(paste(d$CompetitionOpenSinceYear,d$CompetitionOpenSinceMonth,"01",sep = "-"))
-d$WeeksSinceCompOpened <- as.integer(difftime(d$Date,d$CompetitionOpenDate,units="weeks"))
-                                      
-missing.rows <- d[is.na(d$cloudcover),"Id"]
-d[d$Id==30935,"State"]
 
-for(i in missing.rows){
-  st <- d[d$Id==i,"State"]
-  dt <- d[d$Id==i,"Date"]
-  tab <- as.data.frame(table(d[d$State!=st & d$Date==dt & is.na(d$cloudcover)==FALSE,"cloudcover"]))
-  cc <- which.max(tab$Freq)[1]
-  d[d$Id==i,"cloudcover"] <- cc
-  n <- length(d[is.na(d$cloudcover),"Id"])
-  print(paste(n,"records left"))
-}
 
-d$Promo2Valid <- ifelse(is.na(d$Promo2Valid)==TRUE,"2",d$Promo2Valid)
-d$Promo2Valid <- factor(d$Promo2Valid,levels=c("0","1","2"))
-
-str(d)
 
 d <- d[,-which(names(d) %in% c("Promo2","Promo2SinceWeek","Promo2SinceYear","PromoInterval","Promo2StartDate"))]
 
-TreeTestData <- d
+TreeTrainData <- d
 
-save(TreeTestData,file="Datasets/TreeTestData.RData",compress = TRUE)
+save(TreeTrainData,file="Datasets/TreeTrainData.RData",compress = TRUE)
