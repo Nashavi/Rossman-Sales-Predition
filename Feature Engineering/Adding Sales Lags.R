@@ -12,9 +12,21 @@ d <- training
 #update this for a given lag
 weeks <- 6 
 lag <- weeks * 7 
-
 #chang new variable name
+require(DataCombine)
 dlagged <- slide(d, Var = "Sales", GroupVar = "Store", NewVar= "SixWeekSalesLag",slideBy = -lag)
+
+lag<-lag+7
+dlagged <- slide(dlagged, Var = "Sales", GroupVar = "Store", NewVar= "SevenWeekSalesLag",slideBy = -lag)
+
+lag<-lag+7
+dlagged <- slide(dlagged, Var = "Sales", GroupVar = "Store", NewVar= "EightWeekSalesLag",slideBy = -lag)
+
+lag<-lag+7
+dlagged <- slide(dlagged, Var = "Sales", GroupVar = "Store", NewVar= "NineWeekSalesLag",slideBy = -lag)
+
+lag<-lag+7
+dlagged <- slide(dlagged, Var = "Sales", GroupVar = "Store", NewVar= "TenWeekSalesLag",slideBy = -lag)
 
 training <- dlagged
 
