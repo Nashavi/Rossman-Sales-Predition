@@ -14,6 +14,7 @@ set.seed(686)
 #load datasets for modeling
 load("Datasets/TrainData.RData")
 load("Datasets/EvalData.RData")
+load("Datasets/FullTrainData.RData")
 load("Datasets/TestData.RData")
 
 #Train Set
@@ -32,7 +33,15 @@ EvalData <- data.table(EvalData,keep.rownames = F)
 Eval_Matrix <- sparse.model.matrix(~., data = EvalData)
 deval <- xgb.DMatrix(data = Eval_Matrix, label = Eval_Sales)
 
-eval_watchlist <- list(train=dtrain, test=deval)
+eval_watchlist <- list(eval=deval,train=dtrain)
+
+#Full Training Set 
+FullTrainData <- FullTrainData[FullTrainData$Open==1 & FullTrainData$Sales!=0,]
+FullTrain_Sales = log(FullTrainData$Sales)
+FullTrainData <- FullTrainData[,-c(1,3:5)] #remove id, store, date, sales 
+FullTrainData <- data.table(FullTrainData,keep.rownames = F)
+FullTrain_Matrix <- sparse.model.matrix(~., data = FullTrainData)
+Fulldtrain <- xgb.DMatrix(data = FullTrain_Matrix, label = FullTrain_Sales)
 
 #Test Set 
 Test_Sales <- TestData$Sales
